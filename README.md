@@ -2,9 +2,11 @@
 The present proyect aims to help universities obtain academic articles from Google Scholar 
 and to determine, using Machine Learning techniques, if the articles belong to the university or 
 not, in order to enable their upload.
+
 For this purpose, a system have been develop to facilitate the download of academic articles 
 from the Google Scholar platafform, and since articles might be duplicated, different algorithms 
 are used to filter them.Next, the articles filtered from Google Scholar are matched with the articles filtered from accedaCRIS(or any other university) obtaining a set of articles that we know belong to the university.
+
 Finally, a simple neural network has been created using the Keras library, which can 
 determine if the articles correspond to the university with a reliability of 80%
 
