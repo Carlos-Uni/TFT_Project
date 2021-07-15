@@ -95,5 +95,4 @@ if __name__ == '__main__':
       return x
 
    df_articles = df_articles.apply(lambda x: clean_articles(x), axis=1)
-   print(df_articles)
-   #df_articles.to_csv(today.strftime("%Y-%m") + '-paper-cites-GS.csv', index = False)
+   df_articles.to_csv(today.strftime("%Y-%m") + '-paper-cites-GS.csv', index = False)
