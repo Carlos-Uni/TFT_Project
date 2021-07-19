@@ -167,7 +167,7 @@ if __name__ == '__main__':
 	model.compile(optimizer=Adam(learning_rate=0.01), loss=tf.keras.losses.binary_crossentropy, metrics=['accuracy'])
 
 	train_history = model.fit(X_train, y_train, validation_split=0.2, epochs=20, shuffle=True, class_weight=class_weight_dict, verbose=2)
-	"""
+	
 	train_loss, train_accuracy = model.evaluate(X_train, y_train, verbose=False)
 	test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=False)
 
@@ -181,4 +181,4 @@ if __name__ == '__main__':
 	cm_test = confusion_matrix(y_true=y_test, y_pred=test_rounded_predictions)
 	cm_plot_labels = ['no_belong','belong']
 	plot_confusion_matrix(cm=cm_test, classes=cm_plot_labels, title='Test Confusion Matrix')
-	"""
+	
