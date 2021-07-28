@@ -24,12 +24,11 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 
-	#column Label is added and all author codes are deleted except the first one
+	#column Label is added to the articles that belong to the university
 	record_linkage_df = pd.read_excel(args.articles_belong_file, engine="openpyxl")
 	record_linkage_df['Label'] = 1
-	record_linkage_df['GS-Code'] = record_linkage_df['GS-Code'].apply(lambda row: row.split(',')[0] if ',' in row else row)
 
-	#column Label is added
+	#column Label is added to the articles that don't belong to the university.
 	foreign_art = pd.read_csv(args.articles_notbelong_file, skipinitialspace=True)
 	foreign_art['Label'] = 0
 	foreign_other_art = pd.read_csv(args.articles_notbelong_file2, skipinitialspace=True)

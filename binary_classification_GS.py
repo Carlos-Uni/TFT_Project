@@ -100,10 +100,10 @@ if __name__ == '__main__':
 	test_data['Journal'] = test_data['Journal'].fillna("a")
 	test_data['Year'] = test_data['Year'].fillna(most_repeated_year[0]).astype(int).astype(str)
 	test_data['Authors'] = test_data['Authors'].fillna("a")
-
+	
 	#the columns and their maximum size that are used in Word Embeddings process
 	columns_to_extract = ['GS-Code', 'Article', 'Authors', 'Journal', 'Year']
-	maxlength = [1,25,15,15,1]
+	maxlength = [2,25,15,15,1]
 	maxlength_sum = sum(maxlength)
 
 	#tokenizer is initialized without filters and the special word <pad> is added to the vocabulary
@@ -114,29 +114,29 @@ if __name__ == '__main__':
 	for column_name in columns_to_extract:
 		if column_name != 'GS-Code':
 			train_data[column_name] = train_data[column_name].apply(lambda x : " ".join(re.findall(r"[\w']{3,}|[a-zA-Z][0-9]|[0-9]+",str(x))))
+		else:
+			train_data[column_name] = train_data[column_name].str.replace(',',' ')
 		tokenizer.fit_on_texts(train_data[column_name].values)
+	print(tokenizer.word_index)
 
 	#tokenize the content of the dataframes into a list of integers using the vocabulary
 	train_data[columns_to_extract] = train_data[columns_to_extract].apply(lambda x: tokenizer.texts_to_sequences(x))
 	test_data[columns_to_extract] = test_data[columns_to_extract].apply(lambda x: tokenizer.texts_to_sequences(x))
 
 	#each column has a maximum word size and is filled with the special word <pad> in case it doesn’t reach that size.
-	train_data['GS-Code'] = train_data['GS-Code'].apply(lambda x: x + [tokenizer.word_index['<pad>']]*(maxlength[0] - len(x)))
+	train_data['GS-Code'] = train_data['GS-Code'].apply(lambda x: x[:maxlength[0]] + [tokenizer.word_index['<pad>']]*(maxlength[0] - len(x)))
 	train_data['Article'] = train_data['Article'].apply(lambda x: x[:maxlength[1]] + [tokenizer.word_index['<pad>']]*(maxlength[1] - len(x)))
 	train_data['Authors'] = train_data['Authors'].apply(lambda x: x[:maxlength[2]] + [tokenizer.word_index['<pad>']]*(maxlength[2] - len(x)))
 	train_data['Journal'] = train_data['Journal'].apply(lambda x: x[:maxlength[3]] + [tokenizer.word_index['<pad>']]*(maxlength[3] - len(x)))
-	train_data['Year'] = train_data['Year'].apply(lambda x: x + [tokenizer.word_index['<pad>']]*(maxlength[4] - len(x)))
 
-	test_data['GS-Code'] = test_data['GS-Code'].apply(lambda x: x + [tokenizer.word_index['<pad>']]*(maxlength[0] - len(x)))
+	test_data['GS-Code'] = test_data['GS-Code'].apply(lambda x: x[:maxlength[0]] + [tokenizer.word_index['<pad>']]*(maxlength[0] - len(x)))
 	test_data['Article'] = test_data['Article'].apply(lambda x: x[:maxlength[1]] + [tokenizer.word_index['<pad>']]*(maxlength[1] - len(x)))
 	test_data['Authors'] = test_data['Authors'].apply(lambda x: x[:maxlength[2]] + [tokenizer.word_index['<pad>']]*(maxlength[2] - len(x)))
 	test_data['Journal'] = test_data['Journal'].apply(lambda x: x[:maxlength[3]] + [tokenizer.word_index['<pad>']]*(maxlength[3] - len(x)))
-	test_data['Year'] = test_data['Year'].apply(lambda x: x + [tokenizer.word_index['<pad>']]*(maxlength[4] - len(x)))
-
+	
 	#all integer lists of all columns are merged into a single one
 	train_data['Tokenized_text'] = train_data[columns_to_extract].apply(lambda x: x.sum(), axis=1)
 	test_data['Tokenized_text'] = test_data[columns_to_extract].apply(lambda x: x.sum(), axis=1)
-
 
 	#prepare train and test data
 	X_train = np.array(train_data['Tokenized_text'].values.tolist())
@@ -167,7 +167,7 @@ if __name__ == '__main__':
 	model.compile(optimizer=Adam(learning_rate=0.01), loss=tf.keras.losses.binary_crossentropy, metrics=['accuracy'])
 
 	train_history = model.fit(X_train, y_train, validation_split=0.2, epochs=20, shuffle=True, class_weight=class_weight_dict, verbose=2)
-	"""
+	
 	train_loss, train_accuracy = model.evaluate(X_train, y_train, verbose=False)
 	test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=False)
 
@@ -181,4 +181,3 @@ if __name__ == '__main__':
 	cm_test = confusion_matrix(y_true=y_test, y_pred=test_rounded_predictions)
 	cm_plot_labels = ['no_belong','belong']
 	plot_confusion_matrix(cm=cm_test, classes=cm_plot_labels, title='Test Confusion Matrix')
-	"""

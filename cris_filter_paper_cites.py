@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
 	#copy of the original dataframe to clean the data and not modify the original one
 	df_copy = df.copy()
-	df_copy[['TITLE', 'JOURNAL_TITLE', 'AUTHOR_LIST']] = df_copy[['TITLE', 'JOURNAL_TITLE', 'AUTHOR_LIST']].apply(lambda row: clean(row, remove_brackets=False), axis=1)
+	df_copy[['TITLE', 'ISSN','JOURNAL_TITLE', 'AUTHOR_LIST']] = df_copy[['TITLE', 'ISSN', 'JOURNAL_TITLE', 'AUTHOR_LIST']].apply(lambda row: clean(row, remove_brackets=False), axis=1)
 	df_copy['COUNT'] = df_copy.count(axis=1)#column is added with the number of fields that are not empty
 	df_copy = df_copy.sort_values(by=['AUTHOR_CODES','AUTHOR_NAME','COUNT'], na_position='first')
 

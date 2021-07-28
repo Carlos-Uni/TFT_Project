@@ -21,7 +21,7 @@ def dataframe_compare(df_x, df_y, id):
 		print("The program is matching authors...")
 		#Conditions for comparison
 		compare = recordlinkage.Compare()
-		compare.string('Nombre', 'Nombre', label='Score')
+		compare.string('Nombre', 'Nombre', method='jarowinkler', label='Score')
 		#dataframe with all comparisons from pairs and conditions
 		features = compare.compute(candidates, df_x)
 		return features[(features['Score'] >= 0.90)]
@@ -81,6 +81,7 @@ if __name__ == '__main__':
 
 	for author_matches_index in author_matches.index:
 		print("The program is matching " + df_authors.loc[author_matches_index[0], 'Nombre'] + " with " + df_authors.loc[author_matches_index[1], 'Nombre'])
+		
 		author_duplicate_list = []
 		#dataframe with all the articles of both authors
 		df_arts_compare = df_arts_copy[(df_arts_copy['GS-Code'] == author_matches_index[0]) | (df_arts_copy['GS-Code'] == author_matches_index[1])]
